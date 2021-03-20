@@ -67,7 +67,7 @@ const Leaderboard: React.FC = () => {
             <IonReactRouter>
                 <IonRouterOutlet>
                 <Switch>
-                    {/* <Redirect exact path="/leaderboard" to="/leaderboard/" /> */}
+                    <Redirect exact path="/leaderboard" to="/leaderboard/all" />
                     <Route path="/leaderboard/all" component={LeaderboardAll} render={() => <IonContent><LeaderboardAll /></IonContent>} exact={true} />
                     <Route path="/leaderboard/friends" render={() => <IonContent><LeaderboardFriends /></IonContent>} exact={true} />
                 </Switch>
