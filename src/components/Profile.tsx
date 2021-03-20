@@ -22,9 +22,14 @@ import {
   IonItemDivider,
   IonItemGroup,
   IonIcon,
-  IonPopover
+  IonPopover,
+  IonModal,
+  IonButton,
+  IonRefresher,
+  IonRefresherContent
 } from "@ionic/react";
 import { Route, Redirect } from 'react-router';
+import { RefresherEventDetail } from '@ionic/core';
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -43,7 +48,7 @@ import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import { IonReactRouter } from "@ionic/react-router";
 import { Switch } from "react-router";
-import { chevronForward, chevronForwardOutline, helpCircleOutline, peopleOutline, pricetagsOutline } from "ionicons/icons";
+import { chevronForward, chevronForwardOutline, helpCircleOutline, peopleOutline, pricetagsOutline, refresh } from "ionicons/icons";
 import { NONAME } from "node:dns";
 import FriendsList from "./FriendsList";
 
@@ -71,6 +76,7 @@ const Profile: React.FC = () => {
     const [name, setName] = useState('<name>')
     const [photo, setPhoto] = useState('')
     const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
+    const [showModal, setShowModal] = useState(false);
 
     const togglePopover = (e:any) => {
         e.persist();
@@ -117,6 +123,84 @@ const Profile: React.FC = () => {
         </>
     )
 
+    const arr = [];
+
+    async function getContacts() {
+        try {
+          const data = await aituBridge.getContacts();
+          data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
+          arr.map(contact => setList(list => [...list, contact]));
+          arr.length = 0;
+        } catch (e) {
+          // handle error
+          console.log(e);
+        }
+      }
+    
+    useEffect(() => {
+        if (aituBridge.isSupported()) {
+          getContacts();
+        }
+      }, []);
+    
+    const [list, setList] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [searchResults, setSearchResults] = useState([])
+
+    useEffect(() => {
+        setSearchResults(list);
+    }, [list])
+
+    useEffect(() => {
+        const result = list.filter(item => item.toLowerCase().includes(searchText.toLowerCase()));
+        setSearchResults(result)
+    }, [searchText])
+
+    function doRefresh(event: CustomEvent<RefresherEventDetail>) {      
+        setTimeout(async () => {
+            const data = await aituBridge.getContacts();
+            data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
+            setList([])
+            arr.map(contact => setList(list => [...list, contact]));
+            event.detail.complete();
+        }, 1000);
+    }
+
+    const FriendsList = (
+        <>
+        <IonPage>
+            <IonHeader>
+                <IonToolbar>
+                    <IonTitle>Друзья в oinau</IonTitle>
+                    <IonButton slot='end' fill='clear' onClick={() => setShowModal(false)}>Закрыть</IonButton>
+                </IonToolbar>
+                <IonToolbar>
+                    <IonSearchbar
+                        value={searchText} 
+                        onIonChange={e => setSearchText(e.detail.value!)} 
+                        placeholder={'Поиск'}>
+                    </IonSearchbar>
+                </IonToolbar>
+            </IonHeader>
+            <IonContent>
+                <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+                    <IonRefresherContent 
+                    pullingText="Потяните чтобы обновить список"
+                    refreshingSpinner="lines"
+                    refreshingText="Обновляю список..."
+                    pullingIcon={refresh}>
+                    </IonRefresherContent>
+                </IonRefresher>
+                <IonList>
+                    {searchResults.map(item => {
+                        return <IonItem><IonLabel>{item}</IonLabel></IonItem>
+                    })}
+                </IonList>
+            </IonContent>
+        </IonPage>
+        </>
+    )
+
     return(
         <IonPage>
             <IonHeader>
@@ -126,15 +210,15 @@ const Profile: React.FC = () => {
                 {InfoField}
                 <IonReactRouter>
                     <IonRouterOutlet>
-                        <Route path="/profile/friendsList" component={FriendsList} exact={true} />
-                        <Route path="/profile/store" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
+                            {/* <Route path="/profile/friendsList" ={FriendsList} exact={true} />
+                            <Route path="/profile/store" render={() => <IonContent><FriendsList /></IonContent>} exact={true} /> */}
                     </IonRouterOutlet>
                     <IonItemGroup>
                         <IonItemDivider style={divider_styles}>
                             <IonLabel></IonLabel>
                         </IonItemDivider>
 
-                        <IonRouterLink routerLink='/profile/friendsList'>
+                        <IonRouterLink onClick={() => setShowModal(true)}>
                             <IonItem>
                                 <IonIcon style={icon_styles} color='success' icon={peopleOutline}></IonIcon>
                                 <IonLabel>
@@ -159,6 +243,9 @@ const Profile: React.FC = () => {
                         </IonItemDivider>
                     </IonItemGroup>
                 </IonReactRouter>
+                <IonModal isOpen={showModal} cssClass='my-custom-class'>
+                    {FriendsList}
+                </IonModal>
             </IonContent>
         </IonPage>
     );

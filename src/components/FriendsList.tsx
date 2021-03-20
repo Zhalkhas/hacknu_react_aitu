@@ -12,6 +12,7 @@ import {
   IonPage,
   IonRefresher,
   IonRefresherContent,
+  IonButton,
 } from "@ionic/react";
 import { RefresherEventDetail } from '@ionic/core';
 import { refresh } from 'ionicons/icons';
@@ -33,6 +34,7 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
+import { isPropertySignature } from "typescript";
 
 /* Theme variables */
 // import "../theme/variables.css";
@@ -88,9 +90,10 @@ const FriendsList: React.FC = () => {
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Друзья в oinau</IonTitle>
+                    <IonButton slot='end' fill='clear' >Закрыть</IonButton>
                 </IonToolbar>
                 <IonToolbar>
-                    <IonSearchbar 
+                    <IonSearchbar
                         value={searchText} 
                         onIonChange={e => setSearchText(e.detail.value!)} 
                         placeholder={'Поиск'}>
