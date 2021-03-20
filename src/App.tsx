@@ -28,7 +28,7 @@ import {
   person,
   calendar, personCircle, map, informationCircle
 } from 'ionicons/icons';
-import { Route, Redirect } from 'react-router';
+import { Route, Redirect, Switch } from 'react-router';
 
 import FriendsList from './components/FriendsList';
 
@@ -75,36 +75,38 @@ const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-        <IonRouterOutlet>
-          <Redirect exact path="/tabs" to="/tabs/schedule" />
-          {/*
-            Using the render method prop cuts down the number of renders your components will have due to route changes.
-            Use the component prop when your component depends on the RouterComponentProps passed in automatically.
-          */}
-          <Route path="/games" render={() => <IonPage><FriendsList /></IonPage>} exact={true} />
-          <Route path="/leaderboards" render={() => <IonPage><FriendsList /></IonPage>} exact={true} />
-          <Route path="/profile" render={() => <IonPage><FriendsList /></IonPage>} exact={true} />
-        </IonRouterOutlet>
-      </IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Switch>
+              <Redirect exact path="/" to="/profile" />
+              {/*
+                Using the render method prop cuts down the number of renders your components will have due to route changes.
+                Use the component prop when your component depends on the RouterComponentProps passed in automatically.
+              */}
+              <Route path="/games" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
+              <Route path="/leaderboards" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
+              <Route path="/profile" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
+            </Switch>
+          </IonRouterOutlet>  
         
-      <IonTabs>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="games" href="/tabs/games">
-            <IonIcon icon={gameController} />
-            <IonLabel>Games</IonLabel>
-          </IonTabButton>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="games" href="/games">
+              <IonIcon icon={gameController} />
+              <IonLabel>Games</IonLabel>
+            </IonTabButton>
 
-          <IonTabButton tab="leaderboards" href="/tabs/leaderboards">
-            <IonIcon icon={calendar} />
-            <IonLabel>Leaderboards</IonLabel>
-          </IonTabButton>
+            <IonTabButton tab="leaderboards" href="/leaderboards">
+              <IonIcon icon={calendar} />
+              <IonLabel>Leaderboards</IonLabel>
+            </IonTabButton>
 
-          <IonTabButton tab="profile" href="/tabs/profile">
-            <IonIcon icon={person} />
-            <IonLabel>Profile</IonLabel>
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
+            <IonTabButton tab="profile" href="/profile">
+              <IonIcon icon={person} />
+              <IonLabel>Profile</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
     </IonApp>
   );
 };

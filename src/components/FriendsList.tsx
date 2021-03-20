@@ -5,6 +5,12 @@ import {
   IonList,
   IonItem,
   IonListHeader,
+  IonToolbar,
+  IonSearchbar,
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonPage
 } from "@ionic/react";
 
 // import "./App.css";
@@ -35,7 +41,7 @@ const FriendsList: React.FC = () => {
     async function getContacts() {
         try {
           const data = await aituBridge.getContacts();
-          data.contacts.map(contact => arr.push(`${contact.first_name}\n`));
+          data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
           arr.map(contact => setList(list => [...list, contact]));
 
         } catch (e) {
@@ -50,23 +56,46 @@ const FriendsList: React.FC = () => {
         }
       }, []);
     
-    const [list, setList] = useState([])
+    const [list, setList] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [searchResults, setSearchResults] = useState([])
 
-    const listed = list.map(item => {
-        return(
-            <IonItem><IonLabel>{item}</IonLabel></IonItem>
-        )
-    })
+    useEffect(() => {
+        setSearchResults(list);
+    }, [list])
+
+    useEffect(() => {
+        const result = list.filter(item => item.toLowerCase().includes(searchText.toLowerCase()));
+        setSearchResults(result)
+    }, [searchText])
 
     return(
-        <IonList>
-            <IonListHeader>
-                <IonLabel>
-                    Друзья в Oinow
-                </IonLabel>
-            </IonListHeader>
-            {listed}
-        </IonList>
+        <IonPage>
+            <IonHeader>
+                <IonToolbar>
+                    <IonTitle>Друзья в Oinow</IonTitle>
+                </IonToolbar>
+                <IonToolbar>
+                    <IonSearchbar 
+                        value={searchText} 
+                        onIonChange={e => setSearchText(e.detail.value!)} 
+                        placeholder={'Поиск'}>
+                    </IonSearchbar>
+                </IonToolbar>
+            </IonHeader>
+            <IonContent>
+                <IonList>
+                    <IonListHeader>
+                        <IonLabel>
+                            Друзья в Oinow
+                        </IonLabel>
+                    </IonListHeader>
+                    {searchResults.map(item => {
+                        return <IonItem><IonLabel>{item}</IonLabel></IonItem>
+                    })}
+                </IonList>
+            </IonContent>
+        </IonPage>
     );
 }
 
