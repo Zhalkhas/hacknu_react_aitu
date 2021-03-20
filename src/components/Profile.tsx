@@ -108,9 +108,10 @@ const Profile: React.FC = () => {
     const card_styles = (color) => {
         return(
             {
-                'border': '5px solid',
-                'border-color': `${color}`,
-                'border-radius': '100px'
+                'border': '1px solid',
+                'border-radius': '100px',
+                'background-color': '#fff',
+                'box-shadow': `0px 0px 20px 10px ${color}`,
             }
         )
     }
@@ -234,6 +235,7 @@ const Profile: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    <IonLabel>Баланс:</IonLabel>
                     <IonBadge style={{'margin': '10px'}} color='warning'>1320</IonBadge>
                     <IonTitle>Магазин</IonTitle>
                     <IonButton slot='end' fill='clear' onClick={() => setShowModal2(false)}>Закрыть</IonButton>
@@ -244,16 +246,30 @@ const Profile: React.FC = () => {
                     <IonCardHeader>
                         <IonCardTitle>штучка 1</IonCardTitle>
                     </IonCardHeader>
-                    <IonCardContent>
-                        <img src={photo} style={card_styles('red')}/>
-                    </IonCardContent>
+                    <IonRow>
+                        <IonCardContent>
+                            <IonCol>
+                                <img src={photo} style={card_styles('red')}/>
+                            </IonCol>
+                            <IonCol>
+                                <IonBadge style={{'padding': '10px'}} color='warning'>10</IonBadge>
+                                <IonButton fill='outline' color='secondary'>купить</IonButton>
+                            </IonCol>
+                        </IonCardContent>
+                    </IonRow>
                 </IonCard>
                 <IonCard>
                     <IonCardHeader>
                         <IonCardTitle>штучка 2</IonCardTitle>
                     </IonCardHeader>
                     <IonCardContent>
-                        <img src={photo} style={card_styles('lightblue')}/>
+                        <IonCol>
+                            <img src={photo} style={card_styles('#0ff')}/>
+                        </IonCol>
+                        <IonCol>
+                            <IonBadge style={{'padding': '10px'}} color='warning'>10</IonBadge>
+                            <IonButton fill='outline' color='secondary'>купить</IonButton>
+                        </IonCol>
                     </IonCardContent>
                 </IonCard>
                 
