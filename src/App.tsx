@@ -56,9 +56,12 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 
 const App: React.FC = () => {
-  async function getMe() {
+
+  const username = '@oinau'
+
+  async function storage() {
     try {
-      await aituBridge.getMe();
+      await aituBridge.storage.setItem('username', username);
 
     } catch (e) {
       // handle error
@@ -68,7 +71,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (aituBridge.isSupported()) {
-      // getMe();
+      storage();
     }
   }, []);
 

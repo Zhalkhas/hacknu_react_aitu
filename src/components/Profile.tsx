@@ -26,7 +26,11 @@ import {
   IonModal,
   IonButton,
   IonRefresher,
-  IonRefresherContent
+  IonRefresherContent,
+  IonCard,
+  IonCardHeader,
+  IonCardContent,
+  IonCardTitle
 } from "@ionic/react";
 import { Route, Redirect } from 'react-router';
 import { RefresherEventDetail } from '@ionic/core';
@@ -60,7 +64,9 @@ const Profile: React.FC = () => {
         try {
           const data = await aituBridge.getMe();
           setName(data.name + ' ' + data.lastname)
-          setPhoto(data.avatar)
+          setPhoto(data.avatarThumb)
+          
+          const photoUrl = await aituBridge.storage.setItem('photo', `${photo}`)
         } catch (e) {
           // handle error
           console.log(e);
@@ -76,12 +82,13 @@ const Profile: React.FC = () => {
     const [name, setName] = useState('<name>')
     const [photo, setPhoto] = useState('')
     const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
-    const [showModal, setShowModal] = useState(false);
+    const [showModal1, setShowModal1] = useState(false);
+    const [showModal2, setShowModal2] = useState(false);
 
     const togglePopover = (e:any) => {
         e.persist();
-        setShowPopover({ showPopover: true, event: e })
-        console.log('click')
+        setShowPopover({ showPopover: true, event: e });
+        // console.log(photo);
     }
 
     const row_styles = {
@@ -96,6 +103,16 @@ const Profile: React.FC = () => {
 
     const icon_styles = {
         'margin-right': '15px',
+    }
+
+    const card_styles = (color) => {
+        return(
+            {
+                'border': '5px solid',
+                'border-color': `${color}`,
+                'border-radius': '100px'
+            }
+        )
     }
 
     const InfoField = (
@@ -135,8 +152,18 @@ const Profile: React.FC = () => {
           // handle error
           console.log(e);
         }
-      }
+    }
     
+    async function inviteFriend() {
+        try {
+          const data = await aituBridge.share(`Поехали сыграем вместе в одну из игр в ${await aituBridge.storage.getItem('username')}`);
+
+        } catch (e) {
+          // handle error
+          console.log(e);
+        }
+    }
+
     useEffect(() => {
         if (aituBridge.isSupported()) {
           getContacts();
@@ -159,7 +186,7 @@ const Profile: React.FC = () => {
     function doRefresh(event: CustomEvent<RefresherEventDetail>) {      
         setTimeout(async () => {
             const data = await aituBridge.getContacts();
-            data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
+            data.contacts.map(contact => arr.push(`${contact.first_name}` + ' ' + `${contact.last_name ? contact.last_name : ''}\n`));
             setList([])
             arr.map(contact => setList(list => [...list, contact]));
             event.detail.complete();
@@ -171,8 +198,9 @@ const Profile: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    <IonButton slot='start' fill='clear' onClick={() => inviteFriend()}>Пригласить</IonButton>
                     <IonTitle>Друзья в oinau</IonTitle>
-                    <IonButton slot='end' fill='clear' onClick={() => setShowModal(false)}>Закрыть</IonButton>
+                    <IonButton slot='end' fill='clear' onClick={() => setShowModal1(false)}>Закрыть</IonButton>
                 </IonToolbar>
                 <IonToolbar>
                     <IonSearchbar
@@ -193,9 +221,42 @@ const Profile: React.FC = () => {
                 </IonRefresher>
                 <IonList>
                     {searchResults.map(item => {
-                        return <IonItem><IonLabel>{item}</IonLabel></IonItem>
+                        return <IonItem><IonLabel>{item}</IonLabel><IonBadge style={{'padding': '7px'}} color='warning'>1320</IonBadge></IonItem>
                     })}
                 </IonList>
+            </IonContent>
+        </IonPage>
+        </>
+    )
+
+    const Store = (
+        <>
+        <IonPage>
+            <IonHeader>
+                <IonToolbar>
+                    <IonBadge style={{'margin': '10px'}} color='warning'>1320</IonBadge>
+                    <IonTitle>Магазин</IonTitle>
+                    <IonButton slot='end' fill='clear' onClick={() => setShowModal2(false)}>Закрыть</IonButton>
+                </IonToolbar>
+            </IonHeader>
+            <IonContent>
+                <IonCard>
+                    <IonCardHeader>
+                        <IonCardTitle>штучка 1</IonCardTitle>
+                    </IonCardHeader>
+                    <IonCardContent>
+                        <img src={photo} style={card_styles('red')}/>
+                    </IonCardContent>
+                </IonCard>
+                <IonCard>
+                    <IonCardHeader>
+                        <IonCardTitle>штучка 2</IonCardTitle>
+                    </IonCardHeader>
+                    <IonCardContent>
+                        <img src={photo} style={card_styles('lightblue')}/>
+                    </IonCardContent>
+                </IonCard>
+                
             </IonContent>
         </IonPage>
         </>
@@ -218,8 +279,8 @@ const Profile: React.FC = () => {
                             <IonLabel></IonLabel>
                         </IonItemDivider>
 
-                        <IonRouterLink onClick={() => setShowModal(true)}>
-                            <IonItem>
+                        <IonRouterLink onClick={() => setShowModal1(true)}>
+                            <IonItem style={{'padding': '10px 0'}}>
                                 <IonIcon style={icon_styles} color='success' icon={peopleOutline}></IonIcon>
                                 <IonLabel>
                                     <h3>Список друзей</h3>
@@ -228,7 +289,7 @@ const Profile: React.FC = () => {
                             </IonItem>
                         </IonRouterLink>
                         
-                        <IonRouterLink routerLink='/profile/store'>
+                        <IonRouterLink onClick={() => setShowModal2(true)}>
                             <IonItem>
                                 <IonIcon style={icon_styles} color='success' icon={pricetagsOutline}></IonIcon>
                                 <IonLabel>
@@ -243,8 +304,11 @@ const Profile: React.FC = () => {
                         </IonItemDivider>
                     </IonItemGroup>
                 </IonReactRouter>
-                <IonModal isOpen={showModal} cssClass='my-custom-class'>
+                <IonModal isOpen={showModal1} cssClass='my-custom-class'>
                     {FriendsList}
+                </IonModal>
+                <IonModal isOpen={showModal2} cssClass='my-custom-class'>
+                    {Store}
                 </IonModal>
             </IonContent>
         </IonPage>
