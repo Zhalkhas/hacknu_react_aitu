@@ -4,14 +4,17 @@ import {
   IonLabel,
   IonList,
   IonItem,
-  IonListHeader,
   IonToolbar,
   IonSearchbar,
   IonContent,
   IonHeader,
   IonTitle,
-  IonPage
+  IonPage,
+  IonRefresher,
+  IonRefresherContent,
 } from "@ionic/react";
+import { RefresherEventDetail } from '@ionic/core';
+import { refresh } from 'ionicons/icons';
 
 // import "./App.css";
 
@@ -43,7 +46,7 @@ const FriendsList: React.FC = () => {
           const data = await aituBridge.getContacts();
           data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
           arr.map(contact => setList(list => [...list, contact]));
-
+          arr.length = 0;
         } catch (e) {
           // handle error
           console.log(e);
@@ -69,11 +72,22 @@ const FriendsList: React.FC = () => {
         setSearchResults(result)
     }, [searchText])
 
+    function doRefresh(event: CustomEvent<RefresherEventDetail>) {      
+        setTimeout(async () => {
+            const data = await aituBridge.getContacts();
+            data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
+            setList([])
+            arr.map(contact => setList(list => [...list, contact]));
+            event.detail.complete();
+        }, 1000);
+    }
+      
+
     return(
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Друзья в Oinow</IonTitle>
+                    <IonTitle>Друзья в oinau</IonTitle>
                 </IonToolbar>
                 <IonToolbar>
                     <IonSearchbar 
@@ -84,12 +98,15 @@ const FriendsList: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent>
+                <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+                    <IonRefresherContent 
+                    pullingText="Потяните чтобы обновить список"
+                    refreshingSpinner="lines"
+                    refreshingText="Обновляю список..."
+                    pullingIcon={refresh}>
+                    </IonRefresherContent>
+                </IonRefresher>
                 <IonList>
-                    <IonListHeader>
-                        <IonLabel>
-                            Друзья в Oinow
-                        </IonLabel>
-                    </IonListHeader>
                     {searchResults.map(item => {
                         return <IonItem><IonLabel>{item}</IonLabel></IonItem>
                     })}

@@ -26,11 +26,12 @@ import {IonReactRouter} from '@ionic/react-router'
 import { 
   gameController,
   person,
-  calendar, personCircle, map, informationCircle
+  star
 } from 'ionicons/icons';
 import { Route, Redirect, Switch } from 'react-router';
 
 import FriendsList from './components/FriendsList';
+import Leaderboard from './components/Leaderboard';
 
 import "./App.css";
 
@@ -84,7 +85,7 @@ const App: React.FC = () => {
                 Use the component prop when your component depends on the RouterComponentProps passed in automatically.
               */}
               <Route path="/games" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
-              <Route path="/leaderboards" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
+              <Route path="/leaderboard" render={() => <IonContent><Leaderboard /></IonContent>} exact={true} />
               <Route path="/profile" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
             </Switch>
           </IonRouterOutlet>  
@@ -92,17 +93,17 @@ const App: React.FC = () => {
           <IonTabBar slot="bottom">
             <IonTabButton tab="games" href="/games">
               <IonIcon icon={gameController} />
-              <IonLabel>Games</IonLabel>
+              <IonLabel>Игры</IonLabel>
             </IonTabButton>
 
-            <IonTabButton tab="leaderboards" href="/leaderboards">
-              <IonIcon icon={calendar} />
-              <IonLabel>Leaderboards</IonLabel>
+            <IonTabButton tab="leaderboard" href="/leaderboard">
+              <IonIcon icon={star} />
+              <IonLabel>Рекорды</IonLabel>
             </IonTabButton>
 
             <IonTabButton tab="profile" href="/profile">
               <IonIcon icon={person} />
-              <IonLabel>Profile</IonLabel>
+              <IonLabel>Профиль</IonLabel>
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
