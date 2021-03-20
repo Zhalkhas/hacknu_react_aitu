@@ -7,7 +7,30 @@ import {
   IonContent,
   IonButton,
   IonText,
+  IonToast,
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+  IonBadge,
+  IonTab,
+  IonHeader,
+  IonItem,
+  IonToolbar,
+  IonTitle,
+  IonRouterOutlet,
+  IonPage,
 } from "@ionic/react";
+import {IonReactRouter} from '@ionic/react-router'
+import { 
+  gameController,
+  person,
+  calendar, personCircle, map, informationCircle
+} from 'ionicons/icons';
+import { Route, Redirect } from 'react-router';
+
+import FriendsList from './components/FriendsList';
 
 import "./App.css";
 
@@ -30,54 +53,11 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
-interface ISlideContentProps {
-  title: string;
-  onClick: () => void;
-  description: string;
-  buttonTitle: string;
-  imgSrc: string;
-}
-
-const SlideContent: React.FC<ISlideContentProps> = ({
-  onClick,
-  title,
-  description,
-  buttonTitle,
-  imgSrc,
-}) => {
-  return (
-    <>
-      <img src={imgSrc} />
-      <div className="slide-block">
-        <IonText color="dark">
-          <h2>{title}</h2>
-        </IonText>
-        <IonText>
-          <sub>{description}</sub>
-        </IonText>
-      </div>
-      <div className="slide-button">
-        <IonButton expand="full" onClick={onClick}>
-          {buttonTitle}
-        </IonButton>
-      </div>
-    </>
-  );
-};
-
 const App: React.FC = () => {
-  // Optional parameters to pass to the swiper instance.
-  // See http://idangero.us/swiper/api/ for valid options.
-  const slideOpts = {
-    initialSlide: 0,
-    speed: 400,
-  };
-  const slider = useRef<HTMLIonSlidesElement>(null);
-
   async function getMe() {
     try {
-      const data = await aituBridge.getMe();
-      setName(data.name);
+      await aituBridge.getMe();
+
     } catch (e) {
       // handle error
       console.log(e);
@@ -86,66 +66,45 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (aituBridge.isSupported()) {
-      getMe();
+      // getMe();
     }
   }, []);
 
-  const [name, setName] = useState("<username>");
-
-  const handleButtonClick = () => {
-    slider.current?.slideNext();
-  };
+  const [name, setName] = useState('');
 
   return (
     <IonApp>
-      <IonContent>
-        <IonSlides pager={true} options={slideOpts} ref={slider}>
-          <IonSlide>
-            <SlideContent
-              title={`Привет, ${name}, Мини-приложения в Aitu`}
-              onClick={handleButtonClick}
-              description={
-                "Расскажем, что это и как использовать aitu.apps для своего бизнеса"
-              }
-              buttonTitle={"Я готов!"}
-              imgSrc={"/assets/slide1.png"}
-            ></SlideContent>
-          </IonSlide>
-          <IonSlide>
-            <SlideContent
-                title={"+800.000 пользователей Aitu"}
-                onClick={handleButtonClick}
-                description={
-                  "Могут увидеть ваше мини-приложение и стать его пользователями"
-                }
-                buttonTitle={"Интересно"}
-                imgSrc={"/assets/slide2.png"}
-            ></SlideContent>
-          </IonSlide>
-          <IonSlide>
-            <SlideContent
-                title={"Всегда под рукой "}
-                onClick={handleButtonClick}
-                description={
-                  "Каталог с мини-приложениями находится на центральной вкладке. Пользователи легко его найдут"
-                }
-                buttonTitle={"Что ещё?"}
-                imgSrc={"/assets/slide3.png"}
-            ></SlideContent>
-          </IonSlide>
-          <IonSlide>
-            <SlideContent
-                title={"Баннер с ваши предложением"}
-                onClick={handleButtonClick}
-                description={
-                  "         Уникальная скидка, спецпредложение или акция. Донесите ценное предложение до всех пользователей Aitu"
-                }
-                buttonTitle={"Далее"}
-                imgSrc={"/assets/slide4.png"}
-            ></SlideContent>
-          </IonSlide>
-        </IonSlides>
-      </IonContent>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          <Redirect exact path="/tabs" to="/tabs/schedule" />
+          {/*
+            Using the render method prop cuts down the number of renders your components will have due to route changes.
+            Use the component prop when your component depends on the RouterComponentProps passed in automatically.
+          */}
+          <Route path="/games" render={() => <IonPage><FriendsList /></IonPage>} exact={true} />
+          <Route path="/leaderboards" render={() => <IonPage><FriendsList /></IonPage>} exact={true} />
+          <Route path="/profile" render={() => <IonPage><FriendsList /></IonPage>} exact={true} />
+        </IonRouterOutlet>
+      </IonReactRouter>
+        
+      <IonTabs>
+        <IonTabBar slot="bottom">
+          <IonTabButton tab="games" href="/tabs/games">
+            <IonIcon icon={gameController} />
+            <IonLabel>Games</IonLabel>
+          </IonTabButton>
+
+          <IonTabButton tab="leaderboards" href="/tabs/leaderboards">
+            <IonIcon icon={calendar} />
+            <IonLabel>Leaderboards</IonLabel>
+          </IonTabButton>
+
+          <IonTabButton tab="profile" href="/tabs/profile">
+            <IonIcon icon={person} />
+            <IonLabel>Profile</IonLabel>
+          </IonTabButton>
+        </IonTabBar>
+      </IonTabs>
     </IonApp>
   );
 };
