@@ -14,7 +14,8 @@ import {
   IonSegment,
   IonSegmentButton,
   IonRouterOutlet,
-  IonRouterLink
+  IonRouterLink,
+  IonAvatar
 } from "@ionic/react";
 import { Route, Redirect } from 'react-router';
 
@@ -44,7 +45,7 @@ const Profile: React.FC = () => {
         try {
           const data = await aituBridge.getMe();
           setName(data.name + ' ' + data.lastname)
-
+          setPhoto(data.avatar)
         } catch (e) {
           // handle error
           console.log(e);
@@ -58,14 +59,15 @@ const Profile: React.FC = () => {
       }, []);
 
     const [name, setName] = useState('<name>')
+    const [photo, setPhoto] = useState('')
 
     return(
         <IonPage>
             <IonHeader>
-
+                <IonToolbar><IonLabel>{name}</IonLabel></IonToolbar>
             </IonHeader>
             <IonContent>
-                
+                <IonAvatar><img src={photo} /></IonAvatar>
             </IonContent>
         </IonPage>
     );

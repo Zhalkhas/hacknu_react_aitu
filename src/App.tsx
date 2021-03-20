@@ -32,6 +32,7 @@ import { Route, Redirect, Switch } from 'react-router';
 
 import FriendsList from './components/FriendsList';
 import Leaderboard from './components/Leaderboard';
+import Profile from './components/Profile';
 
 import "./App.css";
 
@@ -86,7 +87,7 @@ const App: React.FC = () => {
               */}
               <Route path="/games" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
               <Route path="/leaderboard" render={() => <IonContent><Leaderboard /></IonContent>} exact={true} />
-              <Route path="/profile" render={() => <IonContent><FriendsList /></IonContent>} exact={true} />
+              <Route path="/profile" render={() => <IonContent><Profile /></IonContent>} exact={true} />
             </Switch>
           </IonRouterOutlet>  
         
