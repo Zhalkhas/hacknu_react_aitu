@@ -60,36 +60,16 @@ import FriendsList from "./FriendsList";
 // import "../theme/variables.css";
 
 const Profile: React.FC = () => {
-    async function getMe() {
-        try {
-          const data = await aituBridge.getMe();
-          setName(data.name + ' ' + data.lastname)
-          setPhoto(data.avatarThumb)
-          
-          const photoUrl = await aituBridge.storage.setItem('photo', `${photo}`)
-        } catch (e) {
-          // handle error
-          console.log(e);
-        }
-      }
-    
-    useEffect(() => {
-        if (aituBridge.isSupported()) {
-          getMe();
-        }
-      }, []);
-
     const [name, setName] = useState('<name>')
     const [photo, setPhoto] = useState('')
     const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
     const [showModal1, setShowModal1] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
+    const [list, setList] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [searchResults, setSearchResults] = useState([])
 
-    const togglePopover = (e:any) => {
-        e.persist();
-        setShowPopover({ showPopover: true, event: e });
-        // console.log(photo);
-    }
+    const arr = [];
 
     const row_styles = {
         'justify-content': 'space-between',
@@ -116,6 +96,76 @@ const Profile: React.FC = () => {
         )
     }
 
+    const togglePopover = (e:any) => {
+        e.persist();
+        setShowPopover({ showPopover: true, event: e });
+    }
+
+    async function getMe() {
+        try {
+          const data = await aituBridge.getMe();
+          setName(data.name + ' ' + data.lastname)
+          setPhoto(data.avatar)
+
+        } catch (e) {
+          // handle error
+          console.log(e);
+        }
+      }
+    
+    useEffect(() => {
+        if (aituBridge.isSupported()) {
+          getMe();
+        }
+      }, []);
+
+    useEffect(() => {
+        if (aituBridge.isSupported()) {
+          getContacts();
+        }
+      }, []);
+
+    useEffect(() => {
+        setSearchResults(list);
+    }, [list])
+
+    useEffect(() => {
+        const result = list.filter(item => item.toLowerCase().includes(searchText.toLowerCase()));
+        setSearchResults(result)
+    }, [searchText])
+
+    async function getContacts() {
+        try {
+          const data = await aituBridge.getContacts();
+          data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
+          arr.map(contact => setList(list => [...list, contact]));
+          arr.length = 0;
+        } catch (e) {
+          // handle error
+          console.log(e);
+        }
+    }
+    
+    async function inviteFriend() {
+        try {
+          const data = await aituBridge.share(`Поехали сыграем вместе в одну из игр в ${await aituBridge.storage.getItem('username')}`);
+
+        } catch (e) {
+          // handle error
+          console.log(e);
+        }
+    }
+
+    function doRefresh(event: CustomEvent<RefresherEventDetail>) {      
+        setTimeout(async () => {
+            const data = await aituBridge.getContacts();
+            data.contacts.map(contact => arr.push(`${contact.first_name}` + ' ' + `${contact.last_name ? contact.last_name : ''}\n`));
+            setList([])
+            arr.map(contact => setList(list => [...list, contact]));
+            event.detail.complete();
+        }, 1000);
+    }
+
     const InfoField = (
         <>
         <IonItem lines='none' style={{'border-bottom': 'none'}}>
@@ -140,59 +190,6 @@ const Profile: React.FC = () => {
         </IonItem>
         </>
     )
-
-    const arr = [];
-
-    async function getContacts() {
-        try {
-          const data = await aituBridge.getContacts();
-          data.contacts.map(contact => arr.push(`${contact.first_name}` + `${contact.last_name ? contact.last_name : ''}\n`));
-          arr.map(contact => setList(list => [...list, contact]));
-          arr.length = 0;
-        } catch (e) {
-          // handle error
-          console.log(e);
-        }
-    }
-    
-    async function inviteFriend() {
-        try {
-          const data = await aituBridge.share(`Поехали сыграем вместе в одну из игр в ${await aituBridge.storage.getItem('username')}`);
-
-        } catch (e) {
-          // handle error
-          console.log(e);
-        }
-    }
-
-    useEffect(() => {
-        if (aituBridge.isSupported()) {
-          getContacts();
-        }
-      }, []);
-    
-    const [list, setList] = useState([]);
-    const [searchText, setSearchText] = useState('');
-    const [searchResults, setSearchResults] = useState([])
-
-    useEffect(() => {
-        setSearchResults(list);
-    }, [list])
-
-    useEffect(() => {
-        const result = list.filter(item => item.toLowerCase().includes(searchText.toLowerCase()));
-        setSearchResults(result)
-    }, [searchText])
-
-    function doRefresh(event: CustomEvent<RefresherEventDetail>) {      
-        setTimeout(async () => {
-            const data = await aituBridge.getContacts();
-            data.contacts.map(contact => arr.push(`${contact.first_name}` + ' ' + `${contact.last_name ? contact.last_name : ''}\n`));
-            setList([])
-            arr.map(contact => setList(list => [...list, contact]));
-            event.detail.complete();
-        }, 1000);
-    }
 
     const FriendsList = (
         <>
@@ -285,41 +282,35 @@ const Profile: React.FC = () => {
             </IonHeader>
             <IonContent>
                 {InfoField}
-                <IonReactRouter>
-                    <IonRouterOutlet>
-                            {/* <Route path="/profile/friendsList" ={FriendsList} exact={true} />
-                            <Route path="/profile/store" render={() => <IonContent><FriendsList /></IonContent>} exact={true} /> */}
-                    </IonRouterOutlet>
-                    <IonItemGroup>
-                        <IonItemDivider style={divider_styles}>
-                            <IonLabel></IonLabel>
-                        </IonItemDivider>
+                <IonItemGroup>
+                    <IonItemDivider style={divider_styles}>
+                        <IonLabel></IonLabel>
+                    </IonItemDivider>
 
-                        <IonRouterLink onClick={() => setShowModal1(true)}>
-                            <IonItem style={{'padding': '10px 0'}}>
-                                <IonIcon style={icon_styles} color='success' icon={peopleOutline}></IonIcon>
-                                <IonLabel>
-                                    <h3>Список друзей</h3>
-                                </IonLabel>
-                                <IonIcon icon={chevronForwardOutline}></IonIcon>
-                            </IonItem>
-                        </IonRouterLink>
-                        
-                        <IonRouterLink onClick={() => setShowModal2(true)}>
-                            <IonItem>
-                                <IonIcon style={icon_styles} color='success' icon={pricetagsOutline}></IonIcon>
-                                <IonLabel>
-                                    <h3>Магазин</h3>
-                                </IonLabel>
-                                <IonIcon icon={chevronForwardOutline}></IonIcon>
-                            </IonItem>
-                        </IonRouterLink>
+                    <IonRouterLink onClick={() => setShowModal1(true)}>
+                        <IonItem style={{'padding': '10px 0'}}>
+                            <IonIcon style={icon_styles} color='success' icon={peopleOutline}></IonIcon>
+                            <IonLabel>
+                                <h3>Список друзей</h3>
+                            </IonLabel>
+                            <IonIcon icon={chevronForwardOutline}></IonIcon>
+                        </IonItem>
+                    </IonRouterLink>
+                    
+                    <IonRouterLink onClick={() => setShowModal2(true)}>
+                        <IonItem>
+                            <IonIcon style={icon_styles} color='success' icon={pricetagsOutline}></IonIcon>
+                            <IonLabel>
+                                <h3>Магазин</h3>
+                            </IonLabel>
+                            <IonIcon icon={chevronForwardOutline}></IonIcon>
+                        </IonItem>
+                    </IonRouterLink>
 
-                        <IonItemDivider style={divider_styles}>
-                            <IonLabel></IonLabel>
-                        </IonItemDivider>
-                    </IonItemGroup>
-                </IonReactRouter>
+                    <IonItemDivider style={divider_styles}>
+                        <IonLabel></IonLabel>
+                    </IonItemDivider>
+                </IonItemGroup>
                 <IonModal isOpen={showModal1} cssClass='my-custom-class'>
                     {FriendsList}
                 </IonModal>

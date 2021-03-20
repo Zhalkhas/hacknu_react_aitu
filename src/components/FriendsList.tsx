@@ -83,14 +83,14 @@ const FriendsList: React.FC = () => {
             event.detail.complete();
         }, 1000);
     }
-      
 
     return(
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    {/* <IonButton slot='start' fill='clear' onClick={() => inviteFriend()}>Пригласить</IonButton>
                     <IonTitle>Друзья в oinau</IonTitle>
-                    <IonButton slot='end' fill='clear' >Закрыть</IonButton>
+                    <IonButton slot='end' fill='clear' onClick={() => setShowModal1(false)}>Закрыть</IonButton> */}
                 </IonToolbar>
                 <IonToolbar>
                     <IonSearchbar
@@ -111,7 +111,7 @@ const FriendsList: React.FC = () => {
                 </IonRefresher>
                 <IonList>
                     {searchResults.map(item => {
-                        return <IonItem><IonLabel>{item}</IonLabel></IonItem>
+                        return <IonItem><IonLabel>{item}</IonLabel><IonBadge style={{'padding': '7px'}} color='warning'>1320</IonBadge></IonItem>
                     })}
                 </IonList>
             </IonContent>

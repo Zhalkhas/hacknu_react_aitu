@@ -2,25 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import aituBridge from "@btsd/aitu-bridge";
 import {
   IonApp,
-  IonSlides,
-  IonSlide,
   IonContent,
-  IonButton,
-  IonText,
-  IonToast,
   IonTabs,
   IonTabBar,
   IonTabButton,
   IonIcon,
   IonLabel,
-  IonBadge,
-  IonTab,
-  IonHeader,
-  IonItem,
-  IonToolbar,
-  IonTitle,
   IonRouterOutlet,
-  IonPage,
 } from "@ionic/react";
 import {IonReactRouter} from '@ionic/react-router'
 import { 
@@ -30,7 +18,6 @@ import {
 } from 'ionicons/icons';
 import { Route, Redirect, Switch } from 'react-router';
 
-import FriendsList from './components/FriendsList';
 import Leaderboard from './components/Leaderboard';
 import Profile from './components/Profile';
 
@@ -54,8 +41,6 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import LeaderboardAll from "./components/LeaderboardAll";
-import LeaderboardFriends from "./components/LeaderboardFriends";
 
 const App: React.FC = () => {
 
@@ -77,8 +62,6 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const [name, setName] = useState('');
-
   return (
     <IonApp>
       <IonReactRouter>
@@ -91,10 +74,7 @@ const App: React.FC = () => {
                 Use the component prop when your component depends on the RouterComponentProps passed in automatically.
               */}
               <Route path="/games" exact={true} />
-              {/* <Redirect exact path="/leaderboard" to="/leaderboard/all" />   */}
               <Route path="/leaderboard" render={() => <IonContent><Leaderboard /></IonContent>} exact={true} />
-              {/* <Route path="/leaderboard/all" component={LeaderboardAll} render={() => <IonContent><LeaderboardAll /></IonContent>} exact={true} />
-              <Route path="/leaderboard/friends" render={() => <IonContent><LeaderboardFriends /></IonContent>} exact={true} /> */}
               <Route path="/profile" render={() => <IonContent><Profile /></IonContent>} exact={true} />
             </Switch>
           </IonRouterOutlet>  
