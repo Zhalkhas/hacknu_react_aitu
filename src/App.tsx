@@ -54,6 +54,8 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import LeaderboardAll from "./components/LeaderboardAll";
+import LeaderboardFriends from "./components/LeaderboardFriends";
 
 const App: React.FC = () => {
 
@@ -89,7 +91,10 @@ const App: React.FC = () => {
                 Use the component prop when your component depends on the RouterComponentProps passed in automatically.
               */}
               <Route path="/games" exact={true} />
+              {/* <Redirect exact path="/leaderboard" to="/leaderboard/all" />   */}
               <Route path="/leaderboard" render={() => <IonContent><Leaderboard /></IonContent>} exact={true} />
+              {/* <Route path="/leaderboard/all" component={LeaderboardAll} render={() => <IonContent><LeaderboardAll /></IonContent>} exact={true} />
+              <Route path="/leaderboard/friends" render={() => <IonContent><LeaderboardFriends /></IonContent>} exact={true} /> */}
               <Route path="/profile" render={() => <IonContent><Profile /></IonContent>} exact={true} />
             </Switch>
           </IonRouterOutlet>  

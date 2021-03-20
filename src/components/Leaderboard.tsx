@@ -54,41 +54,36 @@ const Leaderboard: React.FC = () => {
         }
       }
     
+    const [currentValue, setCurrentValue] = useState('все')
+
     useEffect(() => {
         if (aituBridge.isSupported()) {
         //   getContacts();
+        setCurrentValue('все')
         }
       }, []);
 
-      const [currentValue, setCurrentValue] = useState('все')
-
     return(
         <IonPage>
-            <IonReactRouter>
-                <IonRouterOutlet>
-                {/* <Switch> */}
-                    <Redirect exact path="/leaderboard" to="/leaderboard/all" />
-                    <Route path="/leaderboard/all" component={LeaderboardAll} render={() => <IonContent><LeaderboardAll /></IonContent>} exact={true} />
-                    <Route path="/leaderboard/friends" render={() => <IonContent><LeaderboardFriends /></IonContent>} exact={true} />
-                {/* </Switch> */}
-                </IonRouterOutlet>
-                <IonHeader>
-                    <IonToolbar>
-                        <IonSegment value={currentValue}>
-                            <IonRouterLink onClick={() => setCurrentValue('все')} routerLink='/leaderboard/all'>
-                                <IonSegmentButton value='все'>
-                                    <IonLabel>Все</IonLabel>
-                                </IonSegmentButton>
-                            </IonRouterLink>
-                            <IonRouterLink onClick={() => setCurrentValue('друзья')} routerLink='/leaderboard/friends'>
-                                <IonSegmentButton value='друзья'>
-                                    <IonLabel>Друзья</IonLabel>
-                                </IonSegmentButton>
-                            </IonRouterLink>
-                        </IonSegment>
-                    </IonToolbar>
-                </IonHeader>
-            </IonReactRouter>
+            <IonHeader>
+                <IonToolbar>
+                    <IonSegment value={currentValue}>
+                        <IonRouterLink onClick={() => setCurrentValue('все')}>
+                            <IonSegmentButton value='все'>
+                                <IonLabel>Все</IonLabel>
+                            </IonSegmentButton>
+                        </IonRouterLink>
+                        <IonRouterLink onClick={() => setCurrentValue('друзья')}>
+                            <IonSegmentButton value='друзья'>
+                                <IonLabel>Друзья</IonLabel>
+                            </IonSegmentButton>
+                        </IonRouterLink>
+                    </IonSegment>
+                </IonToolbar>
+            </IonHeader>
+            <IonContent>
+                {currentValue === 'все' ? <LeaderboardAll /> : <LeaderboardFriends />}
+            </IonContent>
         </IonPage>
     );
 }
