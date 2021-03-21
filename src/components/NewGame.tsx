@@ -10,7 +10,7 @@ import {
     IonCard,
     IonInput,
 } from "@ionic/react";
-import "./App";
+// import "./App";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -28,8 +28,6 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 
-/* Theme variables */
-import "./theme/variables.css";
 import GamePlay from "./GamePlay";
 
 function NewGame() {
@@ -125,5 +123,6 @@ function NewGame() {
     } else {
         return <GamePlay userID={userID} username={username} gameID={invite} isAdmin={showShare} />;
     }
+}
 
-export default NewGame()
+export default NewGame

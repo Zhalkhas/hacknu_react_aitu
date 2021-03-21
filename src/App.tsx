@@ -42,6 +42,7 @@ import "@ionic/react/css/display.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import NewGame from "./components/NewGame";
 
 const App: React.FC = () => {
 
@@ -88,7 +89,7 @@ const App: React.FC = () => {
                 Using the render method prop cuts down the number of renders your components will have due to route changes.
                 Use the component prop when your component depends on the RouterComponentProps passed in automatically.
               */}
-              <Route path="/games" exact={true} />
+              <Route path="/games" render={() => <IonContent><NewGame /></IonContent>} exact={true} />
               <Route path="/leaderboard" render={() => <IonContent><Leaderboard /></IonContent>} exact={true} />
               <Route path="/profile" render={() => <IonContent><Profile /></IonContent>} exact={true} />
             </Switch>
