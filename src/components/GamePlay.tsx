@@ -184,7 +184,13 @@ function GamePlay(props: GamePlayProps) {
     const stateMat = listToMatrix(state, gridWidth);
 
     return <IonApp>
-        <IonLabel>Цель: 50 тапов</IonLabel>
+        <IonHeader>
+            <IonToolbar>
+                <IonTitle>
+                    Цель: 50 тапов
+                </IonTitle>
+            </IonToolbar>
+        </IonHeader>
       <IonGrid>{
         stateMat.map((row) =>
           <IonRow>
