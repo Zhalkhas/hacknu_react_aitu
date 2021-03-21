@@ -45,6 +45,7 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
+import { chevronForwardOutline, helpCircleOutline, peopleOutline, pricetagsOutline, refresh } from "ionicons/icons";
 
 const Profile: React.FC = () => {
     const [name, setName] = useState('<name>')
@@ -54,7 +55,9 @@ const Profile: React.FC = () => {
     const [showModal2, setShowModal2] = useState(false);
     const [list, setList] = useState([]);
     const [searchText, setSearchText] = useState('');
-    const [searchResults, setSearchResults] = useState([])
+    const [searchResults, setSearchResults] = useState([]);
+    const [score, setScore] = useState(0);
+    const [color, setColor] = useState('#fff');
 
     const arr = [];
 
@@ -75,8 +78,11 @@ const Profile: React.FC = () => {
     const card_styles = (color) => {
         return(
             {
+                'margin': '20px',
+                'width': '80px',
+                'height': '80px',
                 'border': '1px solid',
-                'border-radius': '100px',
+                'border-radius': '200px',
                 'background-color': '#fff',
                 'box-shadow': `0px 0px 20px 10px ${color}`,
             }
@@ -93,6 +99,9 @@ const Profile: React.FC = () => {
           const data = await aituBridge.getMe();
           setName(data.name + ' ' + data.lastname)
           setPhoto(data.avatar)
+          
+          const score_response = await aituBridge.storage.getItem('score');
+          setScore(+score_response)
 
         } catch (e) {
           // handle error
@@ -156,7 +165,7 @@ const Profile: React.FC = () => {
     const InfoField = (
         <>
         <IonItem lines='none' style={{'border-bottom': 'none'}}>
-            <IonAvatar slot='start'><img src={photo} /></IonAvatar>
+            <img src={photo} style={card_styles(color)} />
             <IonLabel>
                 <IonRow style={row_styles}>
                     <h2>{name}</h2>
@@ -169,7 +178,7 @@ const Profile: React.FC = () => {
                         <p style={{'margin': '10px'}}>Чтобы заработать очки, приглашайте друзей и близких в совместные игры и развлекайтесь&#128516;<br></br> {'(Очки нельзя потерять, и можно потратить в магазине)'} </p>
                     </IonPopover>
                     <IonItem  lines='none'>
-                        <IonBadge style={{'padding': '7px'}} color='warning'>1320</IonBadge>
+                        <IonBadge style={{'padding': '7px'}} color='warning'>{score}</IonBadge>
                         <IonIcon style={{'margin-left': '5px'}} onClick={(e:any) => togglePopover(e)} icon={helpCircleOutline}></IonIcon>
                     </IonItem>
                 </IonRow>
@@ -214,13 +223,29 @@ const Profile: React.FC = () => {
         </>
     )
 
+    async function handleBuy() {
+        const id = await aituBridge.storage.getItem('id')
+        const response = await fetch(await aituBridge.storage.getItem('url') + '/rest/oinow/profile/shop/', {
+            method: 'POST',
+            body: 
+                JSON.stringify({
+                    'aituID': id,
+                    'style': 1,
+                    'price': 10
+                })
+        });
+
+        setScore(score - 10);
+        setColor('#0ff');
+    }
+
     const Store = (
         <>
         <IonPage>
             <IonHeader>
                 <IonToolbar>
                     <IonLabel>Баланс:</IonLabel>
-                    <IonBadge style={{'margin': '10px'}} color='warning'>1320</IonBadge>
+                    <IonBadge style={{'margin': '10px'}} color='warning'>{score}</IonBadge>
                     <IonTitle>Магазин</IonTitle>
                     <IonButton slot='end' fill='clear' onClick={() => setShowModal2(false)}>Закрыть</IonButton>
                 </IonToolbar>
@@ -228,7 +253,7 @@ const Profile: React.FC = () => {
             <IonContent>
                 <IonCard>
                     <IonCardHeader>
-                        <IonCardTitle>штучка 1</IonCardTitle>
+                        <IonCardTitle>Fire Red</IonCardTitle>
                     </IonCardHeader>
                     <IonRow>
                         <IonCardContent>
@@ -237,14 +262,14 @@ const Profile: React.FC = () => {
                             </IonCol>
                             <IonCol>
                                 <IonBadge style={{'padding': '10px'}} color='warning'>10</IonBadge>
-                                <IonButton fill='outline' color='secondary'>купить</IonButton>
+                                <IonButton onClick={() => handleBuy()} style={{'margin-left': '20px'}} fill='outline' color='secondary'>купить</IonButton>
                             </IonCol>
                         </IonCardContent>
                     </IonRow>
                 </IonCard>
                 <IonCard>
                     <IonCardHeader>
-                        <IonCardTitle>штучка 2</IonCardTitle>
+                        <IonCardTitle>Neon Blue</IonCardTitle>
                     </IonCardHeader>
                     <IonCardContent>
                         <IonCol>
@@ -252,7 +277,7 @@ const Profile: React.FC = () => {
                         </IonCol>
                         <IonCol>
                             <IonBadge style={{'padding': '10px'}} color='warning'>10</IonBadge>
-                            <IonButton fill='outline' color='secondary'>купить</IonButton>
+                            <IonButton onClick={() => handleBuy()} style={{'margin-left': '20px'}} fill='outline' color='secondary'>купить</IonButton>
                         </IonCol>
                     </IonCardContent>
                 </IonCard>

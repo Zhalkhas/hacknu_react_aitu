@@ -9,6 +9,7 @@ import {
   IonIcon,
   IonLabel,
   IonRouterOutlet,
+  IonAlert,
 } from "@ionic/react";
 import {IonReactRouter} from '@ionic/react-router'
 import { 
@@ -44,12 +45,34 @@ import "./theme/variables.css";
 
 const App: React.FC = () => {
 
+  const [content, setContent] = useState('');
   const username = '@oinau'
+  const url = 'https://dff80b9b6a90.ngrok.io'
 
-  async function storage() {
+  async function getInfo() {
     try {
       await aituBridge.storage.setItem('username', username);
+      const getMe = await aituBridge.getMe();
+      const getPhone = await aituBridge.getPhone();
 
+        // const response = await fetch(url + '/rest/oinow/profile/', {
+        //   method: 'POST',
+        //   body: JSON.stringify({
+        //     'aituID': getMe.id,
+        //     'name': getMe.name,
+        //     'lastname': getMe.lastname,
+        //     'phone': getPhone.phone,
+        //   })
+        // });
+
+      const response = await fetch(`${url}/rest/oinow/profile/${getMe.id}`)
+      const data = await response.json()
+      setContent(data.score)
+
+      await aituBridge.storage.setItem('id', `${getMe.id}`)
+      await aituBridge.storage.setItem('url', `${url}`)
+      await aituBridge.storage.setItem('score', `${data.score}`)
+      
     } catch (e) {
       // handle error
       console.log(e);
@@ -58,7 +81,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (aituBridge.isSupported()) {
-      storage();
+      getInfo();
     }
   }, []);
 
