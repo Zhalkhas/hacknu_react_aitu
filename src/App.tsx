@@ -48,7 +48,7 @@ const App: React.FC = () => {
 
   const [content, setContent] = useState('');
   const username = '@oinau'
-  const url = 'https://dff80b9b6a90.ngrok.io'
+  const url = 'https://tolego.rocks'
 
   async function getInfo() {
     try {

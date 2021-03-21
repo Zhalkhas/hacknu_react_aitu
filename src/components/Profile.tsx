@@ -49,7 +49,7 @@ import { chevronForwardOutline, helpCircleOutline, peopleOutline, pricetagsOutli
 
 const Profile: React.FC = () => {
     const [name, setName] = useState('<name>')
-    const [photo, setPhoto] = useState('')
+    const [photo, setPhoto] = useState('https://www.dovercourt.org/wp-content/uploads/2019/11/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.jpg')
     const [popoverState, setShowPopover] = useState({ showPopover: false, event: undefined });
     const [showModal1, setShowModal1] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
@@ -101,7 +101,7 @@ const Profile: React.FC = () => {
           setPhoto(data.avatar)
           
           const score_response = await aituBridge.storage.getItem('score');
-          setScore(+score_response)
+          setScore(isNaN(+score_response) ? 0 : +score_response)
 
         } catch (e) {
           // handle error
