@@ -2,12 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import aituBridge from "@btsd/aitu-bridge";
 import {
   IonApp,
-  IonSlides,
-  IonSlide,
   IonContent,
-  IonButton,
-  IonText,
+  IonTabs,
+  IonTabBar,
+  IonTabButton,
+  IonIcon,
+  IonLabel,
+  IonRouterOutlet,
+  IonAlert,
 } from "@ionic/react";
+import {IonReactRouter} from '@ionic/react-router'
+import { 
+  gameController,
+  person,
+  star
+} from 'ionicons/icons';
+import { Route, Redirect, Switch } from 'react-router';
+
+import Leaderboard from './components/Leaderboard';
+import Profile from './components/Profile';
 
 import "./App.css";
 
@@ -30,54 +43,28 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
-interface ISlideContentProps {
-  title: string;
-  onClick: () => void;
-  description: string;
-  buttonTitle: string;
-  imgSrc: string;
-}
-
-const SlideContent: React.FC<ISlideContentProps> = ({
-  onClick,
-  title,
-  description,
-  buttonTitle,
-  imgSrc,
-}) => {
-  return (
-    <>
-      <img src={imgSrc} />
-      <div className="slide-block">
-        <IonText color="dark">
-          <h2>{title}</h2>
-        </IonText>
-        <IonText>
-          <sub>{description}</sub>
-        </IonText>
-      </div>
-      <div className="slide-button">
-        <IonButton expand="full" onClick={onClick}>
-          {buttonTitle}
-        </IonButton>
-      </div>
-    </>
-  );
-};
-
 const App: React.FC = () => {
-  // Optional parameters to pass to the swiper instance.
-  // See http://idangero.us/swiper/api/ for valid options.
-  const slideOpts = {
-    initialSlide: 0,
-    speed: 400,
-  };
-  const slider = useRef<HTMLIonSlidesElement>(null);
 
-  async function getMe() {
+  const [content, setContent] = useState('');
+  const username = '@oinau'
+  const url = 'https://dff80b9b6a90.ngrok.io'
+
+  async function getInfo() {
     try {
-      const data = await aituBridge.getMe();
-      setName(data.name);
+      await aituBridge.storage.setItem('username', username);
+      const getMe = await aituBridge.getMe();
+      const getPhone = await aituBridge.getPhone();
+
+      // const [infoResponse, dateResponse] = await Promise.all([
+
+      // ])
+      const response = await fetch(`${url}/rest/oinow/profile/${getMe.id}`)
+      const data = await response.json()
+      setContent(data.score)
+
+      await aituBridge.storage.setItem('id', `${getMe.id}`)
+      await aituBridge.storage.setItem('url', `${url}`)
+      await aituBridge.storage.setItem('score', `${data.score}`)
     } catch (e) {
       // handle error
       console.log(e);
@@ -86,66 +73,45 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (aituBridge.isSupported()) {
-      getMe();
+      getInfo();
     }
   }, []);
 
-  const [name, setName] = useState("<username>");
-
-  const handleButtonClick = () => {
-    slider.current?.slideNext();
-  };
-
   return (
     <IonApp>
-      <IonContent>
-        <IonSlides pager={true} options={slideOpts} ref={slider}>
-          <IonSlide>
-            <SlideContent
-              title={`Привет, ${name}, Мини-приложения в Aitu`}
-              onClick={handleButtonClick}
-              description={
-                "Расскажем, что это и как использовать aitu.apps для своего бизнеса"
-              }
-              buttonTitle={"Я готов!"}
-              imgSrc={"/assets/slide1.png"}
-            ></SlideContent>
-          </IonSlide>
-          <IonSlide>
-            <SlideContent
-                title={"+800.000 пользователей Aitu"}
-                onClick={handleButtonClick}
-                description={
-                  "Могут увидеть ваше мини-приложение и стать его пользователями"
-                }
-                buttonTitle={"Интересно"}
-                imgSrc={"/assets/slide2.png"}
-            ></SlideContent>
-          </IonSlide>
-          <IonSlide>
-            <SlideContent
-                title={"Всегда под рукой "}
-                onClick={handleButtonClick}
-                description={
-                  "Каталог с мини-приложениями находится на центральной вкладке. Пользователи легко его найдут"
-                }
-                buttonTitle={"Что ещё?"}
-                imgSrc={"/assets/slide3.png"}
-            ></SlideContent>
-          </IonSlide>
-          <IonSlide>
-            <SlideContent
-                title={"Баннер с ваши предложением"}
-                onClick={handleButtonClick}
-                description={
-                  "         Уникальная скидка, спецпредложение или акция. Донесите ценное предложение до всех пользователей Aitu"
-                }
-                buttonTitle={"Далее"}
-                imgSrc={"/assets/slide4.png"}
-            ></SlideContent>
-          </IonSlide>
-        </IonSlides>
-      </IonContent>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Switch>
+              <Redirect exact path="/" to="/profile" />
+              {/*
+                Using the render method prop cuts down the number of renders your components will have due to route changes.
+                Use the component prop when your component depends on the RouterComponentProps passed in automatically.
+              */}
+              <Route path="/games" exact={true} />
+              <Route path="/leaderboard" render={() => <IonContent><Leaderboard /></IonContent>} exact={true} />
+              <Route path="/profile" render={() => <IonContent><Profile /></IonContent>} exact={true} />
+            </Switch>
+          </IonRouterOutlet>  
+        
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="games" href="/games">
+              <IonIcon icon={gameController} />
+              <IonLabel>Игры</IonLabel>
+            </IonTabButton>
+
+            <IonTabButton tab="leaderboard" href="/leaderboard">
+              <IonIcon icon={star} />
+              <IonLabel>Рекорды</IonLabel>
+            </IonTabButton>
+
+            <IonTabButton tab="profile" href="/profile">
+              <IonIcon icon={person} />
+              <IonLabel>Профиль</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
     </IonApp>
   );
 };
