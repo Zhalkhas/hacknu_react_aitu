@@ -15,6 +15,7 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
+  IonLabel,
 } from "@ionic/react";
 
 // import "./App.css";
@@ -178,6 +179,7 @@ function GamePlay(props: GamePlayProps) {
     const stateMat = listToMatrix(state, gridWidth);
 
     return <IonApp>
+        <IonLabel>Цель: 50 тапов</IonLabel>
       <IonGrid>{
         stateMat.map((row) =>
           <IonRow>

@@ -97,6 +97,7 @@ function NewGame() {
                         }
 
                         <IonInput
+                            style={{'margin': '15px 0'}}
                             value={invite}
                             onIonChange={e => setInvite(e.detail.value!)}
                             placeholder="Инвайт код"
