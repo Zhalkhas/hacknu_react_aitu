@@ -25,13 +25,23 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
+import { request } from "node:https";
 
 /* Theme variables */
 
 const LeaderboardAll: React.FC = () => {
-    async function getContacts() {
+
+    const [arr, setArr] = useState([])
+
+
+    async function request() {
         try {
-          const data = await aituBridge.getContacts();
+          const url = await aituBridge.storage.getItem('url');
+
+          const response = await fetch(url + '/rest/oinow/leaderboard/')
+          const data = await response.json()
+
+          data.map(item => setArr(arr => [...arr, item]))
 
         } catch (e) {
           // handle error
@@ -41,18 +51,17 @@ const LeaderboardAll: React.FC = () => {
     
     useEffect(() => {
         if (aituBridge.isSupported()) {
-        //   getContacts();
+          request();
         }
       }, []);
+
 
     return(
         <IonPage>
             <IonContent>
                 <IonList>
                     <IonListHeader><IonTitle>Общий рейтинг</IonTitle></IonListHeader>
-                    <IonItem>
-                        <IonLabel>all</IonLabel>
-                    </IonItem>
+                    {arr.map(item => <IonItem><IonLabel>{item.name}: {item.score}</IonLabel></IonItem>)}
                 </IonList>
             </IonContent>
         </IonPage>

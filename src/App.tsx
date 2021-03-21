@@ -55,16 +55,9 @@ const App: React.FC = () => {
       const getMe = await aituBridge.getMe();
       const getPhone = await aituBridge.getPhone();
 
-        // const response = await fetch(url + '/rest/oinow/profile/', {
-        //   method: 'POST',
-        //   body: JSON.stringify({
-        //     'aituID': getMe.id,
-        //     'name': getMe.name,
-        //     'lastname': getMe.lastname,
-        //     'phone': getPhone.phone,
-        //   })
-        // });
+      // const [infoResponse, dateResponse] = await Promise.all([
 
+      // ])
       const response = await fetch(`${url}/rest/oinow/profile/${getMe.id}`)
       const data = await response.json()
       setContent(data.score)
@@ -72,7 +65,6 @@ const App: React.FC = () => {
       await aituBridge.storage.setItem('id', `${getMe.id}`)
       await aituBridge.storage.setItem('url', `${url}`)
       await aituBridge.storage.setItem('score', `${data.score}`)
-      
     } catch (e) {
       // handle error
       console.log(e);

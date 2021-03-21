@@ -29,19 +29,32 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 
 const LeaderboardFriends: React.FC = () => {
+    const [arr, setArr] = useState([])
+
     async function getContacts() {
         try {
-          const data = await aituBridge.getContacts();
+          const contacts = await aituBridge.getContacts();
+          const url = await aituBridge.storage.getItem('url');
+          const cnt = contacts.contacts
+
+          const response = await fetch(url + '/rest/oinow/friends/', {
+              method: 'POST',
+              body: JSON.stringify(cnt)
+          });
+
+          const data = await response.json();
+
+          data.map(item => setArr(arr => [...arr, item]))
 
         } catch (e) {
           // handle error
           console.log(e);
         }
-      }
+    }
     
     useEffect(() => {
         if (aituBridge.isSupported()) {
-        //   getContacts();
+          getContacts();
         }
       }, []);
 
@@ -50,9 +63,7 @@ const LeaderboardFriends: React.FC = () => {
             <IonContent>
                 <IonList>
                     <IonListHeader><IonTitle>Рейтинг друзей</IonTitle></IonListHeader>
-                    <IonItem>
-                        <IonLabel>friends</IonLabel>
-                    </IonItem>
+                    {arr.map(item => <IonItem><IonLabel>{item.name}: {item.score}</IonLabel></IonItem>)}
                 </IonList>
             </IonContent>
         </IonPage>

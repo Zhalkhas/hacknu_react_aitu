@@ -215,7 +215,7 @@ const Profile: React.FC = () => {
                 </IonRefresher>
                 <IonList>
                     {searchResults.map(item => {
-                        return <IonItem><IonLabel>{item}</IonLabel><IonBadge style={{'padding': '7px'}} color='warning'>1320</IonBadge></IonItem>
+                        return <IonItem><IonLabel>{item}</IonLabel><IonBadge style={{'padding': '7px'}} color='warning'>0</IonBadge></IonItem>
                     })}
                 </IonList>
             </IonContent>
@@ -251,7 +251,7 @@ const Profile: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent>
-                <IonCard>
+                {/* <IonCard>
                     <IonCardHeader>
                         <IonCardTitle>Fire Red</IonCardTitle>
                     </IonCardHeader>
@@ -266,7 +266,7 @@ const Profile: React.FC = () => {
                             </IonCol>
                         </IonCardContent>
                     </IonRow>
-                </IonCard>
+                </IonCard> */}
                 <IonCard>
                     <IonCardHeader>
                         <IonCardTitle>Neon Blue</IonCardTitle>
