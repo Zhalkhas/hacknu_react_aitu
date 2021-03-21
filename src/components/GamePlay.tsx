@@ -16,6 +16,7 @@ import {
   IonCardTitle,
   IonCardContent,
   IonLabel,
+  IonHeader,
 } from "@ionic/react";
 
 // import "./App.css";
@@ -156,8 +157,12 @@ function GamePlay(props: GamePlayProps) {
 
   if (lobby) {
     return <IonApp>
+        <IonHeader>
+            <IonToolbar>
+                <IonTitle >Игроки в игре</IonTitle>
+            </IonToolbar>
+        </IonHeader>
       <IonContent>
-        <IonTitle >Игроки в игре</IonTitle>
 
         <IonList>
           {users.map((username, index) => <div><IonItem key={index}>{username}</IonItem></div>)}
