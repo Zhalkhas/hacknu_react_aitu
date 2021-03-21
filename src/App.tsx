@@ -56,11 +56,20 @@ const App: React.FC = () => {
       const getMe = await aituBridge.getMe();
       const getPhone = await aituBridge.getPhone();
 
-      // const [infoResponse, dateResponse] = await Promise.all([
-
-      // ])
-      const response = await fetch(`${url}/rest/oinow/profile/${getMe.id}`)
-      const data = await response.json()
+      const [userResponse, scoreResponse] = await Promise.all([
+        fetch(`${url}/rest/oinow/profile/`, {
+          method: 'POST',
+          body: JSON.stringify({
+            'aituID': getMe.id,
+            'name': getMe.name,
+            'lastname': getMe.lastname,
+            'phone': getPhone.phone
+          })
+        }),
+        fetch(`${url}/rest/oinow/profile/${getMe.id}`)
+      ])
+      
+      const data = await scoreResponse.json()
       setContent(data.score)
 
       await aituBridge.storage.setItem('id', `${getMe.id}`)
