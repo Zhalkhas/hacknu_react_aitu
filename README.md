@@ -1,6 +1,8 @@
-# React Boilerplate
+# Oinow Aitu App
 
-React приложение, показывает как использовать библиотеку @btsd/aitu-bridge для управления приложением в Aitu Apps
+React приложение для Aitu Apps, предоставляет платформу для создания мультиплеерных игр на 
+Aitu Apps.
+Бэкэнд хранится [тут](https://github.com/doughnuty/oinow_backend)
 
 ## Документация
 
