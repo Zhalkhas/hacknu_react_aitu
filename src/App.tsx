@@ -102,10 +102,10 @@ const App: React.FC = () => {
         <IonSlides pager={true} options={slideOpts} ref={slider}>
           <IonSlide>
             <SlideContent
-              title={`Привет, ${name}, Мини-приложения в Aitu`}
+              title={`Вассап, ${name}, готов говнокодить?`}
               onClick={handleButtonClick}
               description={
-                "Расскажем, что это и как использовать aitu.apps для своего бизнеса"
+                "Ну тогда расчехляй свое ебаное IDE"
               }
               buttonTitle={"Я готов!"}
               imgSrc={"/assets/slide1.png"}
